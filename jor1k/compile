@@ -1,0 +1,18 @@
+#!/bin/sh
+if [ "$1" = "release" ]; then
+	rsync -av --delete dev/ release/
+	mkdir -p tmp
+	browserify -r ./js/plugins/terminal-linux.js:LinuxTerm -r ./js/master/master.js:Jor1k -o tmp/jor1k-master-min.js
+	browserify js/worker/worker.js -o tmp/jor1k-worker-min.js
+
+	closure-compiler --js tmp/jor1k-master-min.js --js_output_file release/jor1k-master-min.js --compilation_level SIMPLE_OPTIMIZATIONS
+	closure-compiler --js tmp/jor1k-worker-min.js --js_output_file release/jor1k-worker-min.js --compilation_level SIMPLE_OPTIMIZATIONS
+
+	rsync -av --delete sys/ release/sys/ --exclude="update_json.py" --exclude="*.pyc" --delete-excluded
+	sed -i -e 's|"src":"../sys/fs/"|"src":"./sys/fs/"|g' release/sys/fs.json
+	sed -i -e 's|"src":"../sys/or1k/basefs"|"src":"./sys/or1k/basefs"|g' release/sys/or1k/basefs.json
+	sed -i -e 's|path: "../sys/or1k/",|path: "./sys/or1k/",|g' release/main.html
+else
+	browserify -r ./js/plugins/terminal-linux.js:LinuxTerm -r ./js/master/master.js:Jor1k -o dev/jor1k-master-min.js
+	browserify js/worker/worker.js -o dev/jor1k-worker-min.js
+fi

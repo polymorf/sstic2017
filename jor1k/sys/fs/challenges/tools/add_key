@@ -1,0 +1,15 @@
+#!/usr/bin/python
+from tee_client import *
+import sys
+
+value = sys.argv[1]
+if "add_lum" in sys.argv[0]:
+	if add_lum(value):
+		print "\033[32;1mOK  !\033[0m"
+	else:
+		print "\033[31;1mBAD !\033[0m"
+if "add_key" in sys.argv[0]:
+	if add_key(value):
+		print "\033[32;1mOK  !\033[0m"
+	else:
+		print "\033[31;1mBAD !\033[0m"

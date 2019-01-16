@@ -1,0 +1,6 @@
+config SSTIC
+    tristate "SSTIC Challenge driver"
+    depends on OPENRISC
+    ---help---
+      Enable Linux Kernel SSTIC driver
+

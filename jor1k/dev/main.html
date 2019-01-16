@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Challenge SSTIC 2017</title>
+        <meta name="keywords" content="opencore, emulation, or1000, javascript, linux">
+        <link rel="stylesheet" href="css/default.css?v27">
+        <script src="js/sweetalert.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+    </head>
+    <body onload="Start()">
+    <table style="margin: auto;">
+        <tr>
+            <td colspan="3" id="telemetry-row"><span id="telemetry" class="telemetry-off" onclick="jor1k.sstic_front.ChangeTelemetry()">telemetry off</span></td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="logo-col">
+                <img src="images/logo.png" width="192px" />
+            </td>
+            <td style="vertical-align: top">
+                <div class="console">
+                    <table id="tty" class="terminal" cellpadding="0" cellspacing="0">
+                    </table>
+                </div>
+                    <div style="text-align: center;">
+                    <label>
+                        <img src="images/upload.png" width="20px" height="20px" title="Upload to home folder" />
+                        <input type="file" id="files" style="visibility:hidden;width:0; height:0;" name="files[]" onchange='OnUploadFiles(this.files)' multiple />
+                    </label>
+                    <img src="images/download.png" width="20px" height="20px"  onclick='jor1k.fs.TAR("user","home/user")' title="Download of home folder" />
+                    <div style="text-align: center;">
+                        Cet émulateur est basé sur le projet <a href="https://s-macke.github.io/jor1k">jor1k</a>
+                    </div>
+                </div>
+            </td>
+            <td rowspan="2" class="levels">
+                <table class="levelstable">
+                    <tr>
+                        <td>
+                            <img src="images/world1.png" id="world0_img" />
+                        </td>
+                        <td>
+                            <div><img src="images/difficulty.png" width="32px" /></div>
+                            <div class="lums" id="lum0">0/0</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="images/world2.png" id="world1_img" />
+                        </td>
+                        <td>
+                            <div>
+                                <img src="images/difficulty.png" width="32px" />
+                                <img src="images/difficulty.png" width="32px" />
+                            </div>
+                            <div class="lums" id="lum1">0/0</div>
+                            <div><img src="images/download.png" width="32px" height="32px"  onclick='jor1k.fs.TAR("dont_let_him_escape","challenges/dont_let_him_escape")' title="download files" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="images/world3.png" id="world2_img" />
+                        </td>
+                        <td>
+                            <div>
+                                <img src="images/difficulty.png" width="32px" />
+                                <img src="images/difficulty.png" width="32px" />
+                            </div>
+                            <div class="lums" id="lum2">0/0</div>
+                            <div><img src="images/download.png" width="32px" height="32px"  onclick='jor1k.fs.TAR("riscy_zones","challenges/riscy_zones")' title="download files" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="images/world4-locked.png" id="world3_img" />
+                        </td>
+                        <td>
+                            <div>
+                                <img src="images/difficulty.png" width="32px" />
+                                <img src="images/difficulty.png" width="32px" />
+                                <img src="images/difficulty.png" width="32px" />
+                            </div>
+                            <div class="lums" id="lum3">0/0</div>
+                            <div><img src="images/download.png" width="32px" height="32px"  onclick='jor1k.fs.TAR("unstable_machines","challenges/unstable_machines")' title="download files" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            </tr>
+            <tr>
+            <td style="vertical-align: top">
+                <div class="console">
+                    <table id="sstic-console" class="terminal" cellpadding="0" cellspacing="0">
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <script src="jor1k-master-min.js"></script>
+
+<script>
+var Jor1k = require("Jor1k");
+var LinuxTerm = require("LinuxTerm");
+
+
+
+function OnUploadFiles(files)
+{
+    for (var i = 0, f; f = files[i]; i++) {
+        jor1k.fs.UploadExternalFile(f);
+    }
+}
+
+function Start() {
+    jor1kparameters = {
+        system: {
+            kernelURL: "vmlinux.bin.bz2",
+            memorysize: 64,
+            cpu: "asm",
+        },
+        fs: {
+            basefsURL: "basefs.json",
+            extendedfsURL: "../fs.json",
+            earlyload: [],
+            lazyloadimages: [
+            ]
+        },
+        term: new LinuxTerm("tty"),
+        ssticConsole: new LinuxTerm("sstic-console"),
+        relayURL: "ws://127.0.0.1:8090/wstap",
+        path: "../sys/or1k/",
+    }
+    jor1k = new Jor1k(jor1kparameters);
+}
+
+</script>
+    </body>
+</html>

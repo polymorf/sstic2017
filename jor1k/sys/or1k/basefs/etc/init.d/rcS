@@ -1,0 +1,55 @@
+#! /bin/sh
+
+busybox mount -a
+
+#remount everything, read/write
+#echo "Remounting root" &
+busybox mount -o remount,rw /
+
+/bin/busybox --install -s
+
+# set hostname
+#echo "Setting hostname" &
+hostname openrisc &
+
+# create some dirs to avoid warning messages
+#mkdir -p /var/run && \
+mkdir -p /etc/network/if-up.d && \
+mkdir -p /etc/network/if-pre-up.d &
+
+# make home directory for root user
+mkdir -p /root &
+
+# telnetd requires this
+mkdir -p /dev/pts && \
+mount -t devpts none /dev/pts &
+
+mkdir -p /dev/shm && \
+mount -t tmpfs none /dev/shm &
+
+chmod a+rw /dev/fb0
+chmod 666 /dev/sstic
+
+#set rows and columns of terminal
+stty rows 24
+stty columns 80
+
+#echo "Configuring loopback device"
+#ifconfig lo 127.0.0.1
+
+#ifup lo &
+
+# clear ethernet's IP
+#echo "Bringing up eth0"
+#ifconfig eth0 192.168.1.100 &
+#ifconfig eth0 up
+
+#route add default gw 192.168.1.1
+
+/sbin/ifup -a
+/usr/sbin/sshd
+ping -c 1 -q 10.42.42.1 >/dev/null 2>&1
+
+# start dont_let_him_escape challenge
+export HOME=/root
+/usr/bin/screen -dmS dont_let_him_escape sh -c '/usr/bin/python /challenges/dont_let_him_escape/server.py'

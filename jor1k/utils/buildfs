@@ -1,0 +1,44 @@
+
+set -e
+
+mkdir -p packages
+mkdir -p fs
+
+#--------------------------------
+
+packages=(
+"ncurses.tar.bz2"
+"openssh.tar.bz2"
+"openssl.tar.bz2"
+"binutils.tar.bz2"
+"strace.tar.bz2"
+"make.tar.bz2"
+"zlib.tar.bz2"
+"musl.tar.bz2"
+"expat.tar.bz2"
+"mtdev.tar.bz2"
+"eudev.tar.bz2"
+"ltrace.tar.bz2"
+"vim.tar.bz2"
+"file.tar.bz2"
+"python.tar.bz2"
+)
+
+list=""
+
+for i in "${packages[@]}"
+do
+	if [ ! -f packages/$i ] ; then
+		echo Download $i
+		wget --quiet --directory-prefix=packages/ "http://jor1k.com/packages/$i"
+	fi
+	echo Testing $i
+	tar -tjf packages/$i &> /dev/null
+	list+=packages/$i" "
+done
+echo All files downloaded
+
+echo Compile converter
+gcc -O2 fs2xml.c -lbz2 -o fs2xml
+
+./fs2xml $list
